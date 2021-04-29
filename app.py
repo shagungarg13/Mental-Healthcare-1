@@ -4,7 +4,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 import pandas as pd
 from database import Report
-from visualization import plot, plotBar
+from visualization import *
 from AnalyseData import Analyse
 
 engine = create_engine('sqlite:///db.sqlite3')
@@ -13,7 +13,7 @@ sess = Session()
 
 analysis = Analyse()
 
-st.title('Global Warming and Climate Change Analysis')
+st.title('Data Analysis in Mental Health Care')
 sidebar = st.sidebar
 
 def viewForm():
@@ -30,9 +30,19 @@ def viewForm():
         sess.commit()
         st.success('Report Saved')
 
-def analyse():
-    data = analysis.getCategories()
-    st.plotly_chart(plotBar(data.index, data.values))
+def viewDataset():
+    st.header('Data Used in Project')
+    st.dataframe(analysis.getDataframe())
+
+def analyseCompany():
+    st.header('Size of Companies')
+    data = analysis.getCompanySizes()
+    st.plotly_chart(plotPie(data.index, data.values))
+
+def analyseEmployee():
+    st.header('Leave Ease in Companies')
+    data = analysis.getLeaveEase()
+    st.plotly_chart(plotBar(data, 'title', 'xlabel', 'ylabel'))
 
 def viewReport():
     reports = sess.query(Report).all()
@@ -50,10 +60,12 @@ def viewReport():
     st.markdown(markdown)
 
 sidebar.header('Choose Your Option')
-options = [ 'View Database', 'Analyse', 'View Report' ]
+options = [ 'View Dataset', 'Analyse Company', 'Analyse Employee' ]
 choice = sidebar.selectbox( options = options, label="Choose Action" )
 
-if choice == options[1]:
-    viewForm()
+if choice == options[0]:
+    viewDataset()
+elif choice == options[1]:
+    analyseCompany()    
 elif choice == options[2]:
-    analyse()
+    analyseEmployee()
