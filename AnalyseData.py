@@ -19,6 +19,8 @@ class Analyse:
     def getLeaveEase(self):
         return self.df.groupby('mh_medical_leave').count()['self_empl_flag']
 
+    def getColumn(self, col):
+        return self.df[col]
 
     def cleanData(self):
         renamed_columns = ['self_empl_flag', 'comp_no_empl', 'tech_comp_flag', 'tech_role_flag', 'mh_coverage_flag',
